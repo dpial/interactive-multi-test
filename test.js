@@ -68,6 +68,8 @@ function saveCurrentAnswer() {
     } else {
         // Если ничего не выбрано, можно сохранять null или что нибудь другое
     }
+    // вывод результата после каждого вопроса
+    resultEl.textContent = `Вы ответили правильно на ${correctAnswersCount} из ${currentIndex+1} вопросов.`;
 }
 
 // Обработчик кнопки «Далее»
@@ -94,8 +96,7 @@ function showResult() {
     nextBtn.style.display = 'none';
 
     // Показываем результат
-    resultEl.style.display = 'block';
-    resultEl.textContent = `Вы ответили правильно на ${correctAnswersCount} из ${questions.length} вопросов.`;
+    resultEl.textContent = `Вы ответили правильно на ${correctAnswersCount} из ${currentIndex} вопросов.`;
 }
 
 // Массив индексов другого массива (для перемешивания индексов)
