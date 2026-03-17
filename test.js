@@ -1,6 +1,8 @@
 // Текущее состояние
-let currentQuestionIndex = 0;          // индекс текущего вопроса
-let userAnswers = [];                  // массив выбранных пользователем индексов (или null, если не выбран)
+let arrIndexsQuestions;                 // массив индексов вопросов (нужно инициализировать и перемешать)
+let currentIndex;                       // текущий индекс, массива индексов, для получения вопроса
+let correctAnswersCount;                // количество правильных ответов пользователя
+let indexCorrectOption;                 // индекс правильного варианта ответа на текущий вопрос
 
 // Элементы DOM
 const questionEl = document.getElementById('question-text');
@@ -8,13 +10,32 @@ const optionsContainer = document.getElementById('options-container');
 const nextBtn = document.getElementById('next-btn');
 const resultEl = document.getElementById('result');
 
+// Запускаем тест после загрузки DOM
+document.addEventListener('DOMContentLoaded', init);
+
+// Начальная инициализация
+function init() {
+    // инициализируем и перемешиваем массив индексов вопросов
+    arrIndexsQuestions = arrIndexs(arrIndexsQuestions, questions);
+    currentIndex = 0;
+    correctAnswersCount = 0;
+
+    // Подписываемся на клик кнопки
+    nextBtn.addEventListener('click', onNextClick);
+    // Отображаем первый вопрос
+    renderQuestion();
+}
+
 // Функция отображения текущего вопроса
 function renderQuestion() {
-    const q = questions[currentQuestionIndex];
+    const q = questions[ arrIndexsQuestions[currentIndex] ];
     questionEl.textContent = q.question;
 
     // Очищаем контейнер с вариантами
     optionsContainer.innerHTML = '';
+
+    // Запоминаем правильный ответ на текущий вопрос
+    indexCorrectOption = q.correct;
 
     // Создаём радиокнопки для каждого варианта
     q.options.forEach((option, index) => {
@@ -26,11 +47,6 @@ function renderQuestion() {
         radio.name = 'answer';          // все радиокнопки в группе с одним именем
         radio.value = index;
         radio.id = `option-${index}`;
-
-        // Если пользователь уже отвечал на этот вопрос (например, после возврата), восстанавливаем выбор
-        if (userAnswers[currentQuestionIndex] === index) {
-            radio.checked = true;
-        }
 
         const label = document.createElement('label');
         label.htmlFor = `option-${index}`;
@@ -46,10 +62,11 @@ function renderQuestion() {
 function saveCurrentAnswer() {
     const selectedRadio = document.querySelector('input[name="answer"]:checked');
     if (selectedRadio) {
-        userAnswers[currentQuestionIndex] = parseInt(selectedRadio.value, 10);
+        // если ответ правильный, то +1 к правельным ответам
+        if(parseInt(selectedRadio.value, 10) === indexCorrectOption)
+            correctAnswersCount++;
     } else {
-        // Если ничего не выбрано, можно сохранять null или оставить предыдущее значение
-        // userAnswers[currentQuestionIndex] = null;
+        // Если ничего не выбрано, можно сохранять null или что нибудь другое
     }
 }
 
@@ -59,9 +76,9 @@ function onNextClick() {
     saveCurrentAnswer();
 
     // Проверяем, есть ли следующий вопрос
-    if (currentQuestionIndex + 1 < questions.length) {
+    if (currentIndex + 1 < questions.length) {
         // Переходим к следующему вопросу
-        currentQuestionIndex++;
+        currentIndex++;
         renderQuestion();
     } else {
         // Если это был последний вопрос – показываем результат
@@ -76,27 +93,20 @@ function showResult() {
     optionsContainer.style.display = 'none';
     nextBtn.style.display = 'none';
 
-    // Подсчитываем количество правильных ответов
-    let correctCount = 0;
-    questions.forEach((q, index) => {
-        // Если пользователь ответил на вопрос и ответ совпадает с правильным
-        if (userAnswers[index] !== undefined && userAnswers[index] === q.correct) {
-            correctCount++;
-        }
-    });
-
     // Показываем результат
     resultEl.style.display = 'block';
-    resultEl.textContent = `Вы ответили правильно на ${correctCount} из ${questions.length} вопросов.`;
+    resultEl.textContent = `Вы ответили правильно на ${correctAnswersCount} из ${questions.length} вопросов.`;
 }
 
-// Начальная инициализация
-function init() {
-    // Подписываемся на клик кнопки
-    nextBtn.addEventListener('click', onNextClick);
-    // Отображаем первый вопрос
-    renderQuestion();
+// Массив индексов другого массива (для перемешивания индексов)
+function arrIndexs(arrIndexs, arr){
+    arrIndexs = new Array(arr.length);
+    //заполним
+    for (let i=0; i<arrIndexs.length; i++){arrIndexs[i] = i;}
+    //перемешаем
+    for (let i = arrIndexs.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [arrIndexs[i], arrIndexs[j]] = [arrIndexs[j], arrIndexs[i]]; // Обмен элементов
+    }
+    return arrIndexs;
 }
-
-// Запускаем тест после загрузки DOM
-document.addEventListener('DOMContentLoaded', init);
