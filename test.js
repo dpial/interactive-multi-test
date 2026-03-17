@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', init);
 // Начальная инициализация
 function init() {
     // инициализируем и перемешиваем массив индексов вопросов
-    arrIndexsQuestions = arrIndexs(arrIndexsQuestions, questions);
+    arrIndexsQuestions = arrIndexs(questions);
     currentIndex = 0;
     correctAnswersCount = 0;
 
@@ -37,8 +37,15 @@ function renderQuestion() {
     // Запоминаем правильный ответ на текущий вопрос
     indexCorrectOption = q.correct;
 
+    // Перемешаем варианты ответов через массив индексов
+    let arrIndexsOptions = arrIndexs(q.options);
+    //GO----------------------------
+
     // Создаём радиокнопки для каждого варианта
-    q.options.forEach((option, index) => {
+    for(let i=0; i<arrIndexsOptions.length; i++){
+        let index = arrIndexsOptions[i];
+        let option = q.options[index];
+
         const optionDiv = document.createElement('div');
         optionDiv.className = 'option';
 
@@ -55,7 +62,7 @@ function renderQuestion() {
         optionDiv.appendChild(radio);
         optionDiv.appendChild(label);
         optionsContainer.appendChild(optionDiv);
-    });
+    }
 }
 
 // Функция сохранения выбранного ответа
@@ -100,8 +107,8 @@ function showResult() {
 }
 
 // Массив индексов другого массива (для перемешивания индексов)
-function arrIndexs(arrIndexs, arr){
-    arrIndexs = new Array(arr.length);
+function arrIndexs(arr){
+    let arrIndexs = new Array(arr.length);
     //заполним
     for (let i=0; i<arrIndexs.length; i++){arrIndexs[i] = i;}
     //перемешаем
