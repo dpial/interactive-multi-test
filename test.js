@@ -68,15 +68,18 @@ function renderQuestion() {
 // Функция сохранения выбранного ответа
 function saveCurrentAnswer() {
     const selectedRadio = document.querySelector('input[name="answer"]:checked');
+    let now=0;
     if (selectedRadio) {
         // если ответ правильный, то +1 к правельным ответам
-        if(parseInt(selectedRadio.value, 10) === indexCorrectOption)
+        if(parseInt(selectedRadio.value, 10) === indexCorrectOption) {
             correctAnswersCount++;
+            now=1;
+        } else now=0;
     } else {
         // Если ничего не выбрано, можно сохранять null или что нибудь другое
     }
     // вывод результата после каждого вопроса
-    resultEl.textContent = `Вы ответили правильно на ${correctAnswersCount} из ${currentIndex+1} вопросов.`;
+    resultEl.textContent = `+${now}. Правильных ответов ${correctAnswersCount} из ${currentIndex+1}. Всего вопросов ${questions.length}.`;
 }
 
 // Обработчик кнопки «Далее»
@@ -103,7 +106,7 @@ function showResult() {
     nextBtn.style.display = 'none';
 
     // Показываем результат
-    resultEl.textContent = `Вы ответили правильно на ${correctAnswersCount} из ${currentIndex} вопросов.`;
+    resultEl.textContent = `Вы ответили правильно на ${correctAnswersCount} из ${currentIndex+1} вопросов.`;
 }
 
 // Массив индексов другого массива (для перемешивания индексов)
