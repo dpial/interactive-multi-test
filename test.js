@@ -9,6 +9,9 @@ const questionEl = document.getElementById('question-text');
 const optionsContainer = document.getElementById('options-container');
 const nextBtn = document.getElementById('next-btn');
 const resultEl = document.getElementById('result');
+const resultBack = document.getElementById("back");
+const resultBackQuestion = document.getElementById("back-question");
+const resultBackOption = document.getElementById("back-option");
 
 // Запускаем тест после загрузки DOM
 document.addEventListener('DOMContentLoaded', init);
@@ -74,12 +77,21 @@ function saveCurrentAnswer() {
         if(parseInt(selectedRadio.value, 10) === indexCorrectOption) {
             correctAnswersCount++;
             now=1;
-        } else now=0;
+        } else {
+            now=0;
+        }
     } else {
         // Если ничего не выбрано, можно сохранять null или что нибудь другое
     }
     // вывод результата после каждого вопроса
     resultEl.textContent = `+${now}. Правильных ответов ${correctAnswersCount} из ${currentIndex+1}. Всего вопросов ${questions.length}.`;
+    if (now == 0) {
+        resultBackQuestion.textContent = questions[ arrIndexsQuestions[currentIndex] ].question;
+        resultBackOption.textContent = questions[ arrIndexsQuestions[currentIndex] ].options[indexCorrectOption];
+        resultBack.style.display = 'block';
+    } else {
+        resultBack.style.display = 'none';
+    }
 }
 
 // Обработчик кнопки «Далее»
