@@ -1,8 +1,35 @@
 // Текущее состояние
 let arrIndexsQuestions;                 // массив индексов вопросов (нужно инициализировать и перемешать)
-let currentIndex;                       // текущий индекс, массива индексов, для получения вопроса
-let correctAnswersCount;                // количество правильных ответов пользователя
-let isCorrect;                          // ответ на вопрос был правельным? (t/f)
+let currentIndex = {                    // текущий индекс
+    "test": 0,                          //  теста
+    "question": 0,                      //  вопроса
+    "end": false,                       //  вопросы закончились?
+    // индекс следующего вопроса
+    next: function(){
+        let test = currentIndex.test+1;
+        let question = currentIndex.question;
+        for(let i=test; i<questions.length; i++){
+            if(question < questions[i].length){
+                currentIndex.test = test;
+                return 0;
+            }
+        }
+        test = 0;
+        question++;
+        for(let i=test; i<questions.length; i++){
+            if(question < questions[i].length){
+                currentIndex.test = test;
+                currentIndex.question = question;
+                return 0;
+            }
+        }
+        currentIndex.end = true;
+    }
+};
+let currentCount = 0;                   // пройдено вопросов, шт
+let correctAnswersCount = 0;            // количество правильных ответов пользователя
+let allCount = 0;                       // всего вопросов, шт
+let isCorrect = false;                  // ответ на вопрос был правельным? (t/f)
 let indexCorrectOption;                 // индекс правильного варианта ответа на текущий вопрос
 
 // Элементы DOM
@@ -20,10 +47,12 @@ document.addEventListener('DOMContentLoaded', init);
 // Начальная инициализация
 function init() {
     // инициализируем и перемешиваем массив индексов вопросов
-    arrIndexsQuestions = arrIndexs(questions);
-    currentIndex = 0;
-    correctAnswersCount = 0;
-    isCorrect = false;
+    arrIndexsQuestions = new Array(questions.length);
+    for(let i=0; i<arrIndexsQuestions.length; i++){
+        arrIndexsQuestions[i] = arrIndexs(questions[i]);
+        // подсчитаем общее количество вопросов
+        allCount += questions[i].length;
+    }
 
     // Подписываемся на клик кнопки
     nextBtn.addEventListener('click', onNextClick);
@@ -33,7 +62,7 @@ function init() {
 
 // Функция отображения текущего вопроса
 function renderQuestion() {
-    const q = questions[ arrIndexsQuestions[currentIndex] ];
+    const q = questions[currentIndex.test][ arrIndexsQuestions[currentIndex.test][currentIndex.question] ];
     questionEl.textContent = q.question;
 
     // Очищаем контейнер с вариантами
@@ -79,9 +108,10 @@ function onNextClick() {
     showResult();
 
     // Проверяем, есть ли следующий вопрос
-    if (currentIndex + 1 < questions.length) {
+    currentIndex.next();
+    if (currentIndex.end === false) {
         // Переходим к следующему вопросу
-        currentIndex++;
+        currentCount++;
         renderQuestion();
     }
 }
@@ -109,12 +139,12 @@ function showResult() {
     if(isCorrect) now=1; else now=0;
 
     // Показываем результат
-    resultEl.textContent = `+${now}. Правильных ответов ${correctAnswersCount} из ${currentIndex+1}. Всего вопросов ${questions.length}.`;
+    resultEl.textContent = `+${now}. Правильных ответов ${correctAnswersCount} из ${currentCount+1}. Всего вопросов ${allCount}.`;
     if (isCorrect) {
         resultBack.style.display = 'none';
     } else {
-        resultBackQuestion.textContent = questions[ arrIndexsQuestions[currentIndex] ].question;
-        resultBackOption.textContent = questions[ arrIndexsQuestions[currentIndex] ].options[indexCorrectOption];
+        resultBackQuestion.textContent = questions[currentIndex.test][ arrIndexsQuestions[currentIndex.test][currentIndex.question] ].question;
+        resultBackOption.textContent = questions[currentIndex.test][ arrIndexsQuestions[currentIndex.test][currentIndex.question] ].options[indexCorrectOption];
         resultBack.style.display = 'block';
     }
 }

@@ -1,9 +1,9 @@
 # Project task list
 
 ## #N - number task; [x] - close; [ ] - open
-- [ ] #1 feat: combine many tests into one test
+- [x] #1 feat: combine many tests into one test
 	- [x] rebuild questions (2D arr) for other test and update
-	- [ ] change logic to handle new arr
+	- [x] change logic to handle new arr
 
 ---
 
