@@ -2,6 +2,7 @@
 let arrIndexsQuestions;                 // массив индексов вопросов (нужно инициализировать и перемешать)
 let currentIndex;                       // текущий индекс, массива индексов, для получения вопроса
 let correctAnswersCount;                // количество правильных ответов пользователя
+let isCorrect;                          // ответ на вопрос был правельным? (t/f)
 let indexCorrectOption;                 // индекс правильного варианта ответа на текущий вопрос
 
 // Элементы DOM
@@ -22,6 +23,7 @@ function init() {
     arrIndexsQuestions = arrIndexs(questions);
     currentIndex = 0;
     correctAnswersCount = 0;
+    isCorrect = false;
 
     // Подписываемся на клик кнопки
     nextBtn.addEventListener('click', onNextClick);
@@ -68,57 +70,53 @@ function renderQuestion() {
     }
 }
 
-// Функция сохранения выбранного ответа
-function saveCurrentAnswer() {
-    const selectedRadio = document.querySelector('input[name="answer"]:checked');
-    let now=0;
-    if (selectedRadio) {
-        // если ответ правильный, то +1 к правельным ответам
-        if(parseInt(selectedRadio.value, 10) === indexCorrectOption) {
-            correctAnswersCount++;
-            now=1;
-        } else {
-            now=0;
-        }
-    } else {
-        // Если ничего не выбрано, можно сохранять null или что нибудь другое
-    }
-    // вывод результата после каждого вопроса
-    resultEl.textContent = `+${now}. Правильных ответов ${correctAnswersCount} из ${currentIndex+1}. Всего вопросов ${questions.length}.`;
-    if (now == 0) {
-        resultBackQuestion.textContent = questions[ arrIndexsQuestions[currentIndex] ].question;
-        resultBackOption.textContent = questions[ arrIndexsQuestions[currentIndex] ].options[indexCorrectOption];
-        resultBack.style.display = 'block';
-    } else {
-        resultBack.style.display = 'none';
-    }
-}
-
 // Обработчик кнопки «Далее»
 function onNextClick() {
-    // Сохраняем ответ, если он был выбран
+    // Фиксация правельности ответа и отображения текущей информации (результата)
     saveCurrentAnswer();
+
+    // Показывать результат после каждого вопроса
+    showResult();
 
     // Проверяем, есть ли следующий вопрос
     if (currentIndex + 1 < questions.length) {
         // Переходим к следующему вопросу
         currentIndex++;
         renderQuestion();
-    } else {
-        // Если это был последний вопрос – показываем результат
-        showResult();
     }
 }
 
-// Функция подсчёта и отображения результата
+// Функция фиксации правельности ответа и отображения текущей информации (результата)
+function saveCurrentAnswer() {
+    const selectedRadio = document.querySelector('input[name="answer"]:checked');
+    if (selectedRadio) {
+        // если ответ правильный, то +1 к правельным ответам
+        if(parseInt(selectedRadio.value, 10) === indexCorrectOption) {
+            correctAnswersCount++;
+            isCorrect = true;
+        } else {
+            isCorrect = false;
+        }
+    } else {
+        // Если ничего не выбрано, можно сохранять null или что нибудь другое
+    }
+}
+
+// Функция отображения результата
 function showResult() {
-    // Скрываем вопрос, варианты и кнопку
-    questionEl.style.display = 'none';
-    optionsContainer.style.display = 'none';
-    nextBtn.style.display = 'none';
+    let now;
+
+    if(isCorrect) now=1; else now=0;
 
     // Показываем результат
-    resultEl.textContent = `Вы ответили правильно на ${correctAnswersCount} из ${currentIndex+1} вопросов.`;
+    resultEl.textContent = `+${now}. Правильных ответов ${correctAnswersCount} из ${currentIndex+1}. Всего вопросов ${questions.length}.`;
+    if (isCorrect) {
+        resultBack.style.display = 'none';
+    } else {
+        resultBackQuestion.textContent = questions[ arrIndexsQuestions[currentIndex] ].question;
+        resultBackOption.textContent = questions[ arrIndexsQuestions[currentIndex] ].options[indexCorrectOption];
+        resultBack.style.display = 'block';
+    }
 }
 
 // Массив индексов другого массива (для перемешивания индексов)
