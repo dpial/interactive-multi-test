@@ -128,6 +128,7 @@ function saveCurrentAnswer() {
         }
     } else {
         // Если ничего не выбрано, можно сохранять null или что нибудь другое
+        isCorrect = false;
     }
 }
 
