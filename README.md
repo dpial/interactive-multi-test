@@ -18,7 +18,7 @@ The `questions` variable is a 2D array:
   "options": ["Option A", "Option B", "Option C", "Option D"],
   "correct": 0 // index of the correct answer
 }
-
+```
 ### Game Logic
 The app displays one question at a time.
 Selection process:

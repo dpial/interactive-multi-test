@@ -29,7 +29,7 @@ let currentIndex = {                    // текущий индекс
 let currentCount = 0;                   // пройдено вопросов, шт
 let correctAnswersCount = 0;            // количество правильных ответов пользователя
 let allCount = 0;                       // всего вопросов, шт
-let isCorrect = false;                  // ответ на вопрос был правельным? (t/f)
+let isCorrect = false;                  // ответ на вопрос был правильным? (t/f)
 let indexCorrectOption;                 // индекс правильного варианта ответа на текущий вопрос
 
 // Элементы DOM
@@ -73,7 +73,6 @@ function renderQuestion() {
 
     // Перемешаем варианты ответов через массив индексов
     let arrIndexsOptions = arrIndexs(q.options);
-    //GO----------------------------
 
     // Создаём радиокнопки для каждого варианта
     for(let i=0; i<arrIndexsOptions.length; i++){
@@ -101,7 +100,7 @@ function renderQuestion() {
 
 // Обработчик кнопки «Далее»
 function onNextClick() {
-    // Фиксация правельности ответа и отображения текущей информации (результата)
+    // Фиксация правильности ответа и отображения текущей информации (результата)
     saveCurrentAnswer();
 
     // Показывать результат после каждого вопроса
@@ -116,11 +115,11 @@ function onNextClick() {
     }
 }
 
-// Функция фиксации правельности ответа и отображения текущей информации (результата)
+// Функция фиксации правильности ответа и отображения текущей информации (результата)
 function saveCurrentAnswer() {
     const selectedRadio = document.querySelector('input[name="answer"]:checked');
     if (selectedRadio) {
-        // если ответ правильный, то +1 к правельным ответам
+        // если ответ правильный, то +1 к правильным ответам
         if(parseInt(selectedRadio.value, 10) === indexCorrectOption) {
             correctAnswersCount++;
             isCorrect = true;
