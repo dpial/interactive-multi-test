@@ -108,7 +108,10 @@ function onNextClick() {
 
     // Проверяем, есть ли следующий вопрос
     currentIndex.next();
-    if (currentIndex.end === false) {
+    if (currentIndex.end) {
+        // спрятать кнопку "Далее", вопросов больше нет
+        nextBtn.style.display = 'none';
+    } else {
         // Переходим к следующему вопросу
         currentCount++;
         renderQuestion();
